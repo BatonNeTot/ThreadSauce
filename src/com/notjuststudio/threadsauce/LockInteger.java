@@ -32,11 +32,11 @@ public class LockInteger {
         }
     }
 
-    public boolean incrementIf(@NotNull final CheckFunction<Integer> checker) {
+    public boolean doIf(@NotNull final DoFunction<Integer> function, @NotNull final CheckFunction<Integer> checker) {
         lock.writeLock().lock();
         try {
             if (checker.check(this.value)) {
-                this.value++;
+                this.value = function.doWith(this.value);
                 return true;
             }
             return false;
@@ -45,12 +45,11 @@ public class LockInteger {
         }
     }
 
+    public boolean incrementIf(@NotNull final CheckFunction<Integer> checker) {
+        return doIf(value -> value++, checker);
+    }
+
     public void decrement() {
-        lock.writeLock().lock();
-        try {
-            this.value++;
-        } finally {
-            lock.writeLock().unlock();
-        }
+        doIf(value -> value--, value -> true);
     }
 }
