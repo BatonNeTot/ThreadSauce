@@ -1,6 +1,7 @@
 package com.notjuststudio.threadsauce;
 
 import com.sun.istack.internal.NotNull;
+import com.sun.istack.internal.Nullable;
 
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -32,24 +33,33 @@ public class LockInteger {
         }
     }
 
-    public boolean doIf(@NotNull final DoFunction<Integer> function, @NotNull final CheckFunction<Integer> checker) {
+    public int ifDoElse(@NotNull final CheckFunction<Integer> checker, @NotNull final DoFunction<Integer> doFunction, @Nullable final DoFunction<Integer> elseFunction) {
         lock.writeLock().lock();
         try {
             if (checker.check(this.value)) {
-                this.value = function.doWith(this.value);
-                return true;
+                this.value = doFunction.doWith(this.value);
+            } else if (elseFunction != null) {
+                this.value = elseFunction.doWith(this.value);
             }
-            return false;
+            return this.value;
         } finally {
             lock.writeLock().unlock();
         }
     }
 
-    public boolean incrementIf(@NotNull final CheckFunction<Integer> checker) {
-        return doIf(value -> value++, checker);
+    public int ifDo(@NotNull final CheckFunction<Integer> checker, @NotNull final DoFunction<Integer> function) {
+        return ifDoElse(checker, function, null);
     }
 
-    public void decrement() {
-        doIf(value -> value--, value -> true);
+    public int doWith(@NotNull final DoFunction<Integer> function) {
+        return ifDo(value -> true, function);
+    }
+
+    public int incrementIf(@NotNull final CheckFunction<Integer> checker) {
+        return ifDo(checker, value -> value++);
+    }
+
+    public int decrement() {
+        return doWith(value -> value--);
     }
 }
