@@ -56,10 +56,10 @@ public class LockInteger {
     }
 
     public int incrementIf(@NotNull final CheckFunction<Integer> checker) {
-        return ifDo(checker, value -> value++);
+        return ifDo(checker, value -> ++value);
     }
 
     public int decrement() {
-        return doWith(value -> value--);
+        return doWith(value -> --value);
     }
 }
