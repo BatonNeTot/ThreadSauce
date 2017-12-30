@@ -33,7 +33,9 @@ public class LockInteger {
         }
     }
 
-    public int ifDoElse(@NotNull final CheckFunction<Integer> checker, @NotNull final DoFunction<Integer> doFunction, @Nullable final DoFunction<Integer> elseFunction) {
+    public int ifDoElse(@NotNull final CheckFunction<Integer> checker,
+                        @NotNull final DoFunction<Integer> doFunction,
+                        @Nullable final DoFunction<Integer> elseFunction) {
         lock.writeLock().lock();
         try {
             if (checker.check(this.value)) {

@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 public class ConcurrentHashSet<E> extends AbstractSet<E> implements Set<E> {
 
@@ -66,5 +67,12 @@ public class ConcurrentHashSet<E> extends AbstractSet<E> implements Set<E> {
     @Override
     public void clear() {
         map.clear();
+    }
+
+    @Override
+    public void forEach(Consumer<? super E> action) {
+        map.forEach((key, value) -> {
+            action.accept(key);
+        });
     }
 }
